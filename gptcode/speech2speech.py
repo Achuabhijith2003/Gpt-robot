@@ -7,7 +7,7 @@ import time
 import sys
 
 # Set your OpenAI API key
-api_key = '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'
+api_key = ''
 openai.api_key = api_key
 
 # method for generate response to promt
