@@ -7,7 +7,7 @@ import time
 import sys
 
 # Set your OpenAI API key
-api_key = ''
+api_key = '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'
 openai.api_key = api_key
 
 # method for generate response to promt
@@ -22,7 +22,7 @@ def Gptrespones(promt):
         stop=None
     )
     print("AI:",response.choices[0].text.strip()) # print the response
-    return  response.choices[0].text.strip()    
+    text_to_speech(response.choices[0].text.strip())    
 
 def recognize_speech():
     # Initialize the recognizer
@@ -48,6 +48,19 @@ def recognize_speech():
         
         
 # Method for converting text to audio using Google Text-to-Speech (gTTS)
+def text_to_speech(text):
+    # Initialize the TTS engine
+    engine = pyttsx3.init()
+
+    # Set properties (optional)
+    engine.setProperty('rate', 150)  # Speed of speech (words per minute)
+    engine.setProperty('volume', 1.0)  # Volume level (0.0 to 1.0)
+
+    # Convert text to speech
+    engine.say(text)
+
+    # Wait for the speech to finish
+    engine.runAndWait()
 
 # main function
 def main():
