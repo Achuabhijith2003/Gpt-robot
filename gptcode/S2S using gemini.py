@@ -1,5 +1,12 @@
 import google.generativeai as genai
+from gtts import gTTS
+import os
+import pyttsx3
+import speech_recognition as sr
+import time
+import sys
 
+# gemini respones method
 def gpt_response(prompt):
   """Generates a response using the generativeai library with safety settings.
 
@@ -53,9 +60,59 @@ def gpt_response(prompt):
 
   # Send the User's Prompt and Return the Model's Response
   response = convo.send_message(prompt)
+  print ("AI: ", response.text)
+  text_to_speech(response.text)
   return response.text
 
-# Example Usage
-user_prompt = "What is the weather like today?"
-generated_response = gpt_response(user_prompt)
-print(generated_response)
+
+# Method for converting text to audio using Google Text-to-Speech (gTTS)
+def text_to_speech(text):
+    # Initialize the TTS engine
+    engine = pyttsx3.init()
+
+    # Set properties (optional)
+    engine.setProperty('rate', 150)  # Speed of speech (words per minute)
+    engine.setProperty('volume', 1.0)  # Volume level (0.0 to 1.0)
+
+    # Convert text to speech
+    engine.say(text)
+
+    # Wait for the speech to finish
+    engine.runAndWait()
+    
+def recognize_speech():
+    # Initialize the recognizer
+    recognizer = sr.Recognizer()
+
+    # Use the default microphone as the audio source
+    with sr.Microphone() as source:
+        print("Speak something...")
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+
+    try:
+        # Recognize speech using Google Speech Recognition
+        promt = recognizer.recognize_google(audio)
+        print("You said:", promt)
+        # call the function 
+        gpt_response(promt)
+        
+    except sr.UnknownValueError:
+        pass
+    except sr.RequestError as e:
+        pass
+      
+
+#main menthod
+def main():
+    print("AI assistant")
+
+    while True:
+    # Example Usage
+        print("\n")
+        recognize_speech()
+       
+        
+        #main call
+if __name__ == "__main__":
+    main()

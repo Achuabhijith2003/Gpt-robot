@@ -7,7 +7,7 @@ import time
 import sys
 
 # Set your OpenAI API key
-api_key = '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'
+api_key = "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"
 openai.api_key = api_key
 
 # method for generate response to promt
@@ -16,8 +16,8 @@ def Gptrespones(promt):
     response = openai.Completion.create(
         engine="davinci-002",  # Specify the GPT model to use
         prompt=promt,
-        max_tokens=50,  # Adjust as needed, controls the length of the response
-        temperature=0,  # Set to 0 for deterministic output
+        max_tokens=500,  # Adjust as needed, controls the length of the response
+        temperature=0.9,  # Set to 0 for deterministic output
         top_p=1.0,  # Ensure the generated text is from the top choice
         stop=None
     )
