@@ -5,24 +5,35 @@ import pyttsx3
 import speech_recognition as sr
 import time
 import sys
+import os
+import sys
+from langchain_community.chat_models import ChatOpenAI
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain.indexes import VectorstoreIndexCreator
 
-# Set your OpenAI API key
-api_key = "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"
-openai.api_key = api_key
+import constants
+
+# Set OpenAI API key
+os.environ["OPENAI_API_KEY"] = constants.APIKEY
 
 # method for generate response to promt
-def Gptrespones(promt):
-    # Call the OpenAI API to generate text
-    response = openai.Completion.create(
-        engine="davinci-002",  # Specify the GPT model to use
-        prompt=promt,
-        max_tokens=500,  # Adjust as needed, controls the length of the response
-        temperature=0.9,  # Set to 0 for deterministic output
-        top_p=1.0,  # Ensure the generated text is from the top choice
-        stop=None
-    )
-    print("AI:",response.choices[0].text.strip()) # print the response
-    text_to_speech(response.choices[0].text.strip())    
+def Gptresponse(query):
+    # Set OpenAI API key
+    os.environ["OPENAI_API_KEY"] = constants.APIKEY
+
+    # Define the data directory
+    data_directory = 'E:\\Gpt-robot\\gptcode\\data\\data.txt'
+
+    # Create a TextLoader to load data from a text file
+    loader = TextLoader(data_directory)
+
+    # Create a VectorstoreIndexCreator and load data using the loader
+    index = VectorstoreIndexCreator().from_loaders([loader])
+
+    # Query the index with ChatOpenAI model
+    result = index.query(query, llm=ChatOpenAI())
+    text_to_speech(result)
+    print("AI:",result) 
 
 def recognize_speech():
     # Initialize the recognizer
@@ -39,7 +50,7 @@ def recognize_speech():
         promt = recognizer.recognize_google(audio)
         print("You said:", promt)
         # call the function 
-        Gptrespones(promt)
+        Gptresponse(promt)
         
     except sr.UnknownValueError:
         pass

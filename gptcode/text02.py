@@ -32,8 +32,12 @@ else:
     index = VectorstoreIndexCreator().from_loaders([loader])
 
 # Create the conversational retrieval chain
+# Define the ChatGPT conversational model
+chatgpt_model = ChatOpenAI(model="gpt-3.5-turbo")
+
+# Create the conversational retrieval chain with both models
 chain = ConversationalRetrievalChain.from_llm(
-    llm=ChatOpenAI(model="gpt-3.5-turbo"),
+    llm=chatgpt_model,
     retriever=index.vectorstore.as_retriever(search_kwargs={"k": 1}),
 )
 
