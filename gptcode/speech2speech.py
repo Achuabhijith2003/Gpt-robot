@@ -7,20 +7,18 @@ import time
 import sys
 import os
 import sys
-from langchain_community.chat_models import ChatOpenAI
+#from langchain_community.chat_models import ChatOpenAI
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain.indexes import VectorstoreIndexCreator
+from langchain_openai import ChatOpenAI
 
 import constants
 
 # Set OpenAI API key
 os.environ["OPENAI_API_KEY"] = constants.APIKEY
 
-# method for generate response to promt
-def Gptresponse(query):
-    # Set OpenAI API key
-    os.environ["OPENAI_API_KEY"] = constants.APIKEY
-
+#method for load data from data center
+def load_data():
     # Define the data directory
     data_directory = 'E:\\Gpt-robot\\gptcode\\data\\data.txt'
 
@@ -29,13 +27,21 @@ def Gptresponse(query):
 
     # Create a VectorstoreIndexCreator and load data using the loader
     index = VectorstoreIndexCreator().from_loaders([loader])
+    return index
 
+
+# method for generate response to promt
+def Gptresponse(query,index):
+    # Set OpenAI API key
+    os.environ["OPENAI_API_KEY"] = constants.APIKEY
+    
     # Query the index with ChatOpenAI model
+    
     result = index.query(query, llm=ChatOpenAI())
     text_to_speech(result)
     print("AI:",result) 
 
-def recognize_speech():
+def recognize_speech(index):
     # Initialize the recognizer
     recognizer = sr.Recognizer()
 
@@ -50,7 +56,7 @@ def recognize_speech():
         promt = recognizer.recognize_google(audio)
         print("You said:", promt)
         # call the function 
-        Gptresponse(promt)
+        Gptresponse(promt,index)
         
     except sr.UnknownValueError:
         pass
@@ -75,10 +81,10 @@ def text_to_speech(text):
 
 # main function
 def main():
+    index=load_data()
     print("AI assistant")
-
     while True:
-       recognize_speech()
+       recognize_speech(index)
 
 if __name__ == "__main__":
     main()
