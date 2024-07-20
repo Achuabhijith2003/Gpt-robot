@@ -52,7 +52,7 @@ def gpt_response(prompt):
 
   # Create the GenerativeModel Instance with Safety Measures
   model = genai.GenerativeModel(
-      model_name="gemini-1.0 -pro",
+      model_name="gemini-1.0-pro",
       generation_config=generation_config,
       safety_settings=safety_settings
   )
