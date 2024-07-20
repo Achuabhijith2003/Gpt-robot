@@ -5,6 +5,8 @@ import pyttsx3
 import speech_recognition as sr
 import time
 import sys
+import datetime
+
 
 # gemini respones method
 def gpt_response(prompt):
@@ -50,7 +52,7 @@ def gpt_response(prompt):
 
   # Create the GenerativeModel Instance with Safety Measures
   model = genai.GenerativeModel(
-      model_name="gemini-1.0-pro",
+      model_name="gemini-1.0 -pro",
       generation_config=generation_config,
       safety_settings=safety_settings
   )
@@ -81,27 +83,38 @@ def text_to_speech(text):
     engine.runAndWait()
     
 def recognize_speech():
-    # Initialize the recognizer
-    recognizer = sr.Recognizer()
+  """Continuously listens for user speech and responds with either the current time or a response from the AI model"""
 
-    # Use the default microphone as the audio source
+  recognizer = sr.Recognizer()
+
+  while True:
+    # Listen for user input
     with sr.Microphone() as source:
-        print("Speak something...")
-        recognizer.adjust_for_ambient_noise(source)
-        audio = recognizer.listen(source)
+      print("Speak something...")
+      recognizer.adjust_for_ambient_noise(source)
+      audio = recognizer.listen(source)
 
     try:
-        # Recognize speech using Google Speech Recognition
-        promt = recognizer.recognize_google(audio)
-        print("You said:", promt)
-        # call the function 
-        gpt_response(promt)
-        
+      # Recognize speech
+      promt = recognizer.recognize_google(audio).lower()
+      print("You said:", promt)
+
+      # Check for time request
+      if promt.lower() == "what time is it" or promt.lower() == "what's the time now":
+  # Your code to tell the time
+
+        now = datetime.datetime.now().strftime("%H:%M:%S")  # Get current time
+        print("AI:", now)
+        text_to_speech(now)  # Speak the current time
+      else:
+        gpt_response(promt)  # Call AI response function
     except sr.UnknownValueError:
-        pass
+      print("Sorry, could not understand audio")
     except sr.RequestError as e:
-        pass
-      
+      print("Could not request results from Google Speech Recognition service; {0}".format(e))
+
+# Rest of your code (main function etc.)
+
 
 #main menthod
 def main():
